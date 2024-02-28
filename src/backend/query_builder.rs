@@ -518,6 +518,16 @@ pub trait QueryBuilder:
                 write!(sql, " AS ").unwrap();
                 alias.prepare(sql.as_writer(), self.quote());
             }
+            TableRef::SimpleExpr(expr) => {
+                self.prepare_simple_expr(expr, sql);
+            }
+            TableRef::SimpleExprAlias(expr, alias) => {
+                write!(sql, "(").unwrap();
+                self.prepare_simple_expr(expr, sql);
+                write!(sql, ")").unwrap();
+                write!(sql, " AS ").unwrap();
+                alias.prepare(sql.as_writer(), self.quote());
+            }
             _ => self.prepare_table_ref_iden(table_ref, sql),
         }
     }

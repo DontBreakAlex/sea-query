@@ -1029,6 +1029,73 @@ impl SelectStatement {
         self.from_from(TableRef::FunctionCall(func, alias.into_iden()))
     }
 
+    /// From expression.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use sea_query::{tests_cfg::*, *};
+    ///
+    /// let expr = Expr::col(Char::Id).eq(Expr::value(1));
+    ///
+    /// let query = Query::select()
+    ///     .column(ColumnRef::Asterisk)
+    ///     .from_expr(expr)
+    ///     .to_owned();
+    ///
+    /// assert_eq!(
+    ///     query.to_string(MysqlQueryBuilder),
+    ///     r#"SELECT * FROM `id` = 1"#
+    /// );
+    /// assert_eq!(
+    ///     query.to_string(PostgresQueryBuilder),
+    ///     r#"SELECT * FROM "id" = 1"#
+    /// );
+    /// assert_eq!(
+    ///     query.to_string(SqliteQueryBuilder),
+    ///     r#"SELECT * FROM "id" = 1"#
+    /// );
+    /// ```
+    pub fn from_expr(&mut self, expr: SimpleExpr) -> &mut Self {
+        self.from_from(TableRef::SimpleExpr(expr));
+        self
+    }
+
+    /// From expression with alias.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use sea_query::{tests_cfg::*, *};
+    ///
+    /// let expr = Expr::col(Char::Id).eq(Expr::value(1));
+    ///
+    /// let query = Query::select()
+    ///     .column(ColumnRef::Asterisk)
+    ///     .from_expr_as(expr, Alias::new("expr"))
+    ///     .to_owned();
+    ///
+    /// assert_eq!(
+    ///     query.to_string(MysqlQueryBuilder),
+    ///     r#"SELECT * FROM `id` = 1 AS `expr`"#
+    /// );
+    /// assert_eq!(
+    ///     query.to_string(PostgresQueryBuilder),
+    ///     r#"SELECT * FROM "id" = 1 AS "expr""#
+    /// );
+    /// assert_eq!(
+    ///     query.to_string(SqliteQueryBuilder),
+    ///     r#"SELECT * FROM "id" = 1 AS "expr""#
+    /// );
+    /// ```
+    pub fn from_expr_as<T>(&mut self, expr: SimpleExpr, alias: T) -> &mut Self
+    where
+        T: IntoIden,
+    {
+        self.from_from(TableRef::SimpleExprAlias(expr, alias.into_iden()));
+        self
+    }
+
     /// Clears all current from clauses.
     ///
     /// # Examples

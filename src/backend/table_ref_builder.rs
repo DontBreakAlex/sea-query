@@ -42,7 +42,9 @@ pub trait TableRefBuilder: QuotedBuilder {
             }
             TableRef::SubQuery(_, _)
             | TableRef::ValuesList(_, _)
-            | TableRef::FunctionCall(_, _) => {
+            | TableRef::FunctionCall(_, _)
+            | TableRef::SimpleExpr(_)
+            | TableRef::SimpleExprAlias(_, _) => {
                 panic!("TableRef with values is not support")
             }
         }

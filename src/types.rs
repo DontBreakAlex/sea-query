@@ -145,6 +145,10 @@ pub enum TableRef {
     ValuesList(Vec<ValueTuple>, DynIden),
     /// Function call with alias
     FunctionCall(FunctionCall, DynIden),
+    /// Expression
+    SimpleExpr(SimpleExpr),
+    /// Expression with alias
+    SimpleExprAlias(SimpleExpr, DynIden),
 }
 
 pub trait IntoTableRef {
@@ -536,6 +540,8 @@ impl TableRef {
             Self::SubQuery(statement, _) => Self::SubQuery(statement, alias.into_iden()),
             Self::ValuesList(values, _) => Self::ValuesList(values, alias.into_iden()),
             Self::FunctionCall(func, _) => Self::FunctionCall(func, alias.into_iden()),
+            Self::SimpleExpr(expr) => Self::SimpleExprAlias(expr, alias.into_iden()),
+            Self::SimpleExprAlias(expr, _) => Self::SimpleExprAlias(expr, alias.into_iden()),
         }
     }
 }
